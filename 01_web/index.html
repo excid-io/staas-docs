@@ -46,6 +46,10 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Web UI</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#signing">Signing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#verification">Verification</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -77,7 +81,33 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="web-ui">Web UI</h1>
-<p>STaaS can be accessed using a Web Ui</p>
+<p>STaaS can be accessed using a Web UI</p>
+<h2 id="signing">Signing</h2>
+<p>Artifact signature can be simply executed by following these steps:</p>
+<ol>
+<li>Press the <code>Sign</code> button</li>
+<li>Select a file to sign and optionally provide a comment</li>
+</ol>
+<p>In the background, the sign page calculates the digest of the selected file and
+submits it for signature. Signed files can be viewed by pressing the <code>Activity</code>
+button. From there, you can download the signature bundle and you can view information
+about the generated certificate, as well as, the record stored in the public registry.
+Signatures can be deleted from STaaS but they are not revoked. </p>
+<h2 id="verification">Verification</h2>
+<p>Generated bundles can be verified using the <a href="https://docs.sigstore.dev/signing/quickstart/">Cosign tool</a>.
+For this verification you would need STaaS's CA certificate. This can be obtained
+by clicking <a href="https://staas.excid.io/Sign/Certificate">here</a>.  A signature bundle can be
+verified using the following command:</p>
+<pre><code>cosign verify-blob \
+    --certificate-identity=YOUR_STAAS_IDENTITY \
+    --certificate-oidc-issuer=https://staas.excid.io \
+    --certificate-chain ca.pem \
+    --insecure-ignore-sct \
+    --bundle signature.bundle \
+    YOUR_FILE
+</code></pre>
+<p>The <code>--insecure-ignore-sct</code> flag is required since certificated generated using a private
+instance of Fulcio are not allowed to be recorded in the transparency registry.</p>
               
             </div>
           </div><footer>

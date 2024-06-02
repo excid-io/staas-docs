@@ -54,8 +54,6 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#signing">Signing</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#listing">Listing</a>
-    </li>
     </ul>
                 </li>
               </ul>
@@ -83,10 +81,41 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="api">API</h1>
-<p>STaaS provides an API that can be used for signing files</p>
+<p>STaaS provides an API that can be used for signing files.</p>
 <h2 id="authorization">Authorization</h2>
+<p>In order to access STaaS API you need to obtain an authorization token. This can be obtained
+by pressing the <code>API tokens</code> button. The generated token should be included in all requests
+an Authorization header. Here is an example of a python script that uses an API token</p>
+<pre><code class="language-python">headers = {
+    'Authorization': 'Basic API_TOKEN'
+    }
+response = requests.request(&quot;POST&quot;, &quot;https://staas.excid.io/Api/Sign&quot;, headers=headers)
+</code></pre>
 <h2 id="signing">Signing</h2>
-<h2 id="listing">Listing</h2>
+<p>STaaS API provides a <code>Sign</code> endpoint that expects a JSON object that includes the 
+following attributes:</p>
+<ul>
+<li>HashBase64: Base64 encoding of a SHA-256 digest.</li>
+<li>Comment : A comment to be stored with the signature.</li>
+</ul>
+<p>This is an example of a python script that used the <code>Sign</code> API endpoint:</p>
+<pre><code class="language-python">with open(ARTIFACT_TO_SIGN,&quot;rb&quot;) as f:
+    bytes = f.read() # read entire file as bytes
+    artifact_hash = hashlib.sha256(bytes).digest()
+headers = {
+'Content-Type': 'application/json',
+'Authorization': 'Basic API_TOKEN'
+}
+payload = f&quot;&quot;&quot;
+{{
+    &quot;HashBase64&quot;:&quot;{base64.b64encode(artifact_hash).decode()}&quot;,
+    &quot;Comment&quot;:&quot;{item}&quot;  
+}}
+
+response = requests.request(&quot;POST&quot;, url + &quot;Api/Sign&quot;, headers=headers, data=payload)
+</code></pre>
+<p>If the signing process is successful, the <code>Sign</code> endpoint responds with HTTP code
+201 and the generated signature bundle.</p>
               
             </div>
           </div><footer>
